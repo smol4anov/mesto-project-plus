@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 interface IUser {
   name: string;
@@ -6,23 +6,28 @@ interface IUser {
   avatar: string;
 }
 
-const userSchema = new mongoose.Schema<IUser>({
-  name: {
-    type: String,
-    minlength: 2,
-    maxlength: 20,
-    required: true,
+const userSchema = new mongoose.Schema<IUser>(
+  {
+    name: {
+      type: String,
+      minlength: 2,
+      maxlength: 20,
+      required: true,
+    },
+    about: {
+      type: String,
+      minlength: 2,
+      maxlength: 200,
+      required: true,
+    },
+    avatar: {
+      type: String,
+      required: true,
+    },
   },
-  about: {
-    type: String,
-    minlength: 2,
-    maxlength: 200,
-    required: true,
+  {
+    versionKey: false,
   },
-  avatar: {
-    type: String,
-    required: true,
-  },
-});
+);
 
-export default mongoose.model<IUser>("user", userSchema);
+export default mongoose.model<IUser>('user', userSchema);

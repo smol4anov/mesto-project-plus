@@ -1,25 +1,18 @@
-import { Router, Request, Response } from "express";
+import { Router } from 'express';
+import {
+  createCard,
+  deleteCard,
+  getCards,
+  removeCardLike,
+  setCardLike,
+} from '../controllers/cards';
 
 const cardRouter = Router();
 
-cardRouter.get("/", (req: Request, res: Response) => {
-  console.log("Контроллер для получения всех карточек");
-});
-
-cardRouter.post("/", (req: Request, res: Response) => {
-  console.log("Контроллер для создания карточки");
-});
-
-cardRouter.delete("/:cardId", (req: Request, res: Response) => {
-  console.log("Контроллер для удаления карточки по id");
-});
-
-cardRouter.put("/:cardId/likes", (req: Request, res: Response) => {
-  console.log("Контроллер для постановки лайка на карточку");
-});
-
-cardRouter.delete("/:cardId/likes", (req: Request, res: Response) => {
-  console.log("Контроллер для убрать лайк с карточки");
-});
+cardRouter.get('/', getCards);
+cardRouter.post('/', createCard);
+cardRouter.delete('/:cardId', deleteCard);
+cardRouter.put('/:cardId/likes', setCardLike);
+cardRouter.delete('/:cardId/likes', removeCardLike);
 
 export default cardRouter;
