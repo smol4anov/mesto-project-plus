@@ -1,5 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 
+const http2 = require('node:http2');
+
+const { HTTP_STATUS_INTERNAL_SERVER_ERROR } = http2.constants;
+
 interface IError extends Error {
   statusCode: number;
 }
@@ -20,9 +24,9 @@ const handleErrors = (
   next: NextFunction,
 ) => {
   const { message } = err;
-  const statusCode = 'statusCode' in err ? err.statusCode : 500;
+  const statusCode = 'statusCode' in err ? err.statusCode : HTTP_STATUS_INTERNAL_SERVER_ERROR;
   res.status(statusCode).send({
-    message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
+    message: statusCode === HTTP_STATUS_INTERNAL_SERVER_ERROR ? 'На сервере произошла ошибка' : message,
   });
   next();
 };
