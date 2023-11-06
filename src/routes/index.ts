@@ -1,10 +1,9 @@
 import { Router } from 'express';
+import http2 from 'node:http2';
 import userRouter from './users';
 import cardRouter from './cards';
 import auth from '../middlewares/auth';
 import { ModifiedError } from '../errors';
-
-const http2 = require('node:http2');
 
 const { HTTP_STATUS_NOT_FOUND } = http2.constants;
 
