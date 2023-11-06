@@ -47,17 +47,16 @@ const getUserById = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const updateUserById = async (
+const updateUserData = async (
+  UserData: Object,
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const { name, about } = req.body;
-
   try {
     const user = await User.findByIdAndUpdate(
       req.user._id,
-      { name, about },
+      UserData,
       {
         new: true,
         runValidators: true,
@@ -72,28 +71,24 @@ const updateUserById = async (
   }
 };
 
+const updateUserById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const { name, about } = req.body;
+
+  return updateUserData({ name, about }, req, res, next);
+};
+
 const updateUserAvatar = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   const { avatar } = req.body;
-  try {
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      { avatar },
-      {
-        new: true,
-        runValidators: true,
-      },
-    ).orFail(new ModifiedError('Запрашиваемый пользователь не найден', HTTP_STATUS_NOT_FOUND));
-    return res.status(HTTP_STATUS_OK).send(user);
-  } catch (err) {
-    if (err instanceof mongoose.Error.ValidationError) {
-      return next(new ModifiedError('Переданы некорректные данные', HTTP_STATUS_BAD_REQUEST));
-    }
-    return next(err);
-  }
+
+  return updateUserData({ avatar }, req, res, next);
 };
 
 export {

@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-
-const http2 = require('node:http2');
+import http2 from 'node:http2';
 
 const { HTTP_STATUS_INTERNAL_SERVER_ERROR } = http2.constants;
 
