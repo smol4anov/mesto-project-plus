@@ -2,7 +2,9 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import http2 from 'node:http2';
 import isEmail from 'validator/lib/isEmail';
-import { defaultUserAbout, defaultUserAvatar, defaultUserName } from '../utils/constants';
+import {
+  defaultUserAbout, defaultUserAvatar, defaultUserName, rexExpUrl,
+} from '../utils/constants';
 import { ModifiedError } from '../errors';
 
 interface IUser {
@@ -48,6 +50,7 @@ const userSchema = new mongoose.Schema<IUser, UserModel>(
     avatar: {
       type: String,
       default: defaultUserAvatar,
+      validate: (value: string): boolean => rexExpUrl.test(value),
     },
   },
   {

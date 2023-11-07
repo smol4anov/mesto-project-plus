@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { rexExpUrl } from '../utils/constants';
 
 interface ICard {
   name: string;
@@ -19,6 +20,7 @@ const cardSchema = new mongoose.Schema<ICard>(
     link: {
       type: String,
       required: true,
+      validate: (value: string): boolean => rexExpUrl.test(value),
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
