@@ -9,6 +9,7 @@ const {
   HTTP_STATUS_CREATED,
   HTTP_STATUS_BAD_REQUEST,
   HTTP_STATUS_NOT_FOUND,
+  HTTP_STATUS_FORBIDDEN,
 } = http2.constants;
 
 const createCard = async (req: Request, res: Response, next: NextFunction) => {
@@ -37,8 +38,12 @@ const getCards = async (req: Request, res: Response, next: NextFunction) => {
 
 const deleteCard = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    await Card.findByIdAndDelete(req.params.cardId)
+    const card = await Card.findById(req.params.cardId)
       .orFail(new ModifiedError('Карточка не найдена по id', HTTP_STATUS_NOT_FOUND));
+    if (card.owner.toString() !== req.user._id) {
+      throw new ModifiedError('Нельзя удалить чужую карточку', HTTP_STATUS_FORBIDDEN);
+    }
+    await Card.findByIdAndDelete(req.params.cardId);
     return res
       .status(HTTP_STATUS_OK)
       .send({ message: 'Card has been deleted' });
