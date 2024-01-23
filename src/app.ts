@@ -5,13 +5,13 @@ import { errors } from 'celebrate';
 import router from './routes';
 import { handleErrors } from './errors';
 import { requestLogger, errorLogger } from './middlewares/logger';
+import { cors } from './middlewares/cors';
+import 'dotenv/config';
 
-require('dotenv').config();
+//require('dotenv').config();
 
-const {
-  PORT = 3000,
-  BASE_PATH = 'mongodb://localhost:27017/mynewdb',
-} = process.env;
+const { PORT = 3000, BASE_PATH = 'mongodb://localhost:27017/mynewdb' } =
+  process.env;
 
 mongoose.set('strictQuery', false);
 mongoose.connect(BASE_PATH);
@@ -24,6 +24,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
+
+app.use(cors);
 
 app.use('/', router);
 

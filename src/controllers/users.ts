@@ -28,16 +28,29 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     });
 
     const newUser = {
-      email, name: user.name, about: user.about, avatar: user.avatar,
+      email,
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
     };
 
     return res.status(HTTP_STATUS_CREATED).send({ data: newUser });
   } catch (err) {
     if (err instanceof MongoServerError && err.code === 11000) {
-      return next(new ModifiedError('Пользователь уже зарегистрирован', HTTP_STATUS_CONFLICT));
+      return next(
+        new ModifiedError(
+          'Пользователь уже зарегистрирован',
+          HTTP_STATUS_CONFLICT
+        )
+      );
     }
     if (err instanceof mongoose.Error.ValidationError) {
-      return next(new ModifiedError('Переданы некорректные данные', HTTP_STATUS_BAD_REQUEST));
+      return next(
+        new ModifiedError(
+          'Переданы некорректные данные',
+          HTTP_STATUS_BAD_REQUEST
+        )
+      );
     }
     return next(err);
   }
@@ -54,12 +67,18 @@ const getUsers = async (req: Request, res: Response, next: NextFunction) => {
 
 const getUserById = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = await User.findById(req.params.userId)
-      .orFail(new ModifiedError('Запрашиваемый пользователь не найден', HTTP_STATUS_NOT_FOUND));
+    const user = await User.findById(req.params.userId).orFail(
+      new ModifiedError(
+        'Запрашиваемый пользователь не найден',
+        HTTP_STATUS_NOT_FOUND
+      )
+    );
     return res.status(HTTP_STATUS_OK).send({ data: user });
   } catch (err) {
     if (err instanceof mongoose.Error.CastError) {
-      return next(new ModifiedError('Некорректный формат id', HTTP_STATUS_BAD_REQUEST));
+      return next(
+        new ModifiedError('Некорректный формат id', HTTP_STATUS_BAD_REQUEST)
+      );
     }
     return next(err);
   }
@@ -69,21 +88,27 @@ const updateUserData = async (
   UserData: Object,
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   try {
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      UserData,
-      {
-        new: true,
-        runValidators: true,
-      },
-    ).orFail(new ModifiedError('Запрашиваемый пользователь не найден', HTTP_STATUS_NOT_FOUND));
+    const user = await User.findByIdAndUpdate(req.user._id, UserData, {
+      new: true,
+      runValidators: true,
+    }).orFail(
+      new ModifiedError(
+        'Запрашиваемый пользователь не найден',
+        HTTP_STATUS_NOT_FOUND
+      )
+    );
     return res.status(HTTP_STATUS_OK).send(user);
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
-      return next(new ModifiedError('Переданы некорректные данные', HTTP_STATUS_BAD_REQUEST));
+      return next(
+        new ModifiedError(
+          'Переданы некорректные данные',
+          HTTP_STATUS_BAD_REQUEST
+        )
+      );
     }
     return next(err);
   }
@@ -92,7 +117,7 @@ const updateUserData = async (
 const updateUserById = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const { name, about } = req.body;
 
@@ -102,7 +127,7 @@ const updateUserById = async (
 const updateUserAvatar = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   const { avatar } = req.body;
 
@@ -117,14 +142,15 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     const token = jwt.sign(
       { _id: user._id },
       NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
-      { expiresIn: '7d' },
+      { expiresIn: '7d' }
     );
-    return res.cookie('jwt', token, {
-      maxAge: 3600000 * 24 * 7,
-      httpOnly: true,
-    })
+    return res
+      .cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      })
       .status(HTTP_STATUS_OK)
-      .send({ message: 'Authorization completed' });
+      .send({ token });
   } catch (err) {
     return next(err);
   }
@@ -132,8 +158,12 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
 const getSelfUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = await User.findById(req.user._id)
-      .orFail(new ModifiedError('Запрашиваемый пользователь не найден', HTTP_STATUS_NOT_FOUND));
+    const user = await User.findById(req.user._id).orFail(
+      new ModifiedError(
+        'Запрашиваемый пользователь не найден',
+        HTTP_STATUS_NOT_FOUND
+      )
+    );
     return res.status(HTTP_STATUS_OK).send(user);
   } catch (err) {
     return next(err);
@@ -141,5 +171,11 @@ const getSelfUser = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 export {
-  createUser, getUsers, getUserById, updateUserById, updateUserAvatar, login, getSelfUser,
+  createUser,
+  getUsers,
+  getUserById,
+  updateUserById,
+  updateUserAvatar,
+  login,
+  getSelfUser,
 };
