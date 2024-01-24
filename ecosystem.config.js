@@ -1,10 +1,10 @@
-import 'dotenv/config';
+require('dotenv').config();
 
 const {
   DEPLOY_USER,
   DEPLOY_HOST,
   DEPLOY_PATH,
-  DEPLOY_REF = 'origin/master',
+  DEPLOY_REF = 'origin/main',
 } = process.env;
 
 module.exports = {
